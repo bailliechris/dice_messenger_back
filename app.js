@@ -4,8 +4,20 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
-//const http = require('http').Server(app);
-//const io = require('socket.io')(http);
+
+// Should be in /posts ? - swap app for router
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+
+// On Connection Method - Socket.io
+io.on('connection', (socket) => {
+    socket.send("Hello!");
+
+    socket.on('chatMessage', (msg) => {
+        console.log(msg);
+        io.emit('chatMessage', msg);
+    });
+  });
 
 //set up cors options
 let corsOptions = {
@@ -21,10 +33,6 @@ app.use(cors(corsOptions));
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-/*io.on('connection', () => {
-    console.log('a user is connected')
-});*/
-
 // Routes List
 app.use('/', require('./routes/index'));
 app.use('/posts', require('./routes/posts'));
@@ -35,6 +43,6 @@ app.get('/*', (req, res) => {
 });
 
 // Start Server
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`listening on port ${port}!`);
 });

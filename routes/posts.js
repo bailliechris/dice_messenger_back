@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
-//const http = require('http').Server(router);
-//const io = require('socket.io')(http);
+
 
 // Load Post models
 //const Post = require('../models/post');
-
+// Post Variables
 var all_posts = [];
 
 // Random Number Function
