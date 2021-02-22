@@ -4,8 +4,6 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
-//const http = require('http').Server(app);
-//const io = require('socket.io')(http);
 
 //set up cors options
 let corsOptions = {
