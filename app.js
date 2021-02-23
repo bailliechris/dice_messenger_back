@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 //set up cors options
 let corsOptions = {
     origin: "https://brave-hermann-d8bac0.netlify.app/",
-    credentials: true,
+    credentials: false,
 }
 
 //Run cors in nodejs app
