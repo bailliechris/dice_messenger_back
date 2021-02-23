@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 
 //set up cors options
 let corsOptions = {
-    origin: "http://localhost:8080",
+    origin: "https://brave-hermann-d8bac0.netlify.app/",
     credentials: true,
 }
 
