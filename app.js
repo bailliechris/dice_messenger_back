@@ -6,15 +6,16 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 //set up cors options
+/*
 let corsOptions = {
     //origin: "https://brave-hermann-d8bac0.netlify.app/",
     origin: "*",
     credentials: false,
-}
+}*/
 
 //Run cors in nodejs app
 // cors(corsoptions);
-app.use(cors(corsOptions));
+app.use(cors());
 
 // body-parser middleware
 app.use(express.json()); // for parsing application/json
