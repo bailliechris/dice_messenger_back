@@ -2,22 +2,16 @@
 // Declare Variables
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
+
+const WebSocketServer = require('websocket').server;
+
 const app = express();
+
 const port = process.env.PORT || 3000;
 
-// Should be in /posts ? - swap app for router
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
-
-// On Connection Method - Socket.io
-io.on('connection', (socket) => {
-    socket.send("Hello!");
-
-    socket.on('chatMessage', (msg) => {
-        console.log(msg);
-        io.emit('chatMessage', msg);
-    });
-  });
+//store list of connected clients
+const clients = [];
 
 //set up cors options
 let corsOptions = {
@@ -33,14 +27,77 @@ app.use(cors(corsOptions));
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+//
+// We need the same instance of the session parser in express and
+// WebSocket server.
+//
+
 // Routes List
 app.use('/', require('./routes/index'));
 app.use('/posts', require('./routes/posts'));
 
+//
+// Create an HTTP server.
+//
+const server = http.createServer(app);
+
+//
+// Create a WebSocket server completely detached from the HTTP server.
+//
+const wss = new WebSocketServer({
+    httpServer: server
+});
+
+function rand_between(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+}
+
+wss.on('request', function(request) {
+    const connection = request.accept(null, request.origin);
+    // Add new client to the client list
+    clients.push(connection);
+    connection.on('message', function(message) {
+        let rec = JSON.parse(message.utf8Data);
+        console.log(rec);
+        if (rec.msg === "roll10") {
+            rec.msg = rand_between(0,9);
+            console.log(rec);
+            let send = JSON.stringify(rec);
+            console.log(send);
+            //connection.send(send);
+
+            clients.forEach(function each(client) {
+                client.send(send);
+            });
+        }
+        else if (rec.msg === "roll100") {
+            rec.msg = rand_between(0,99);
+            console.log(rec);
+            let send = JSON.stringify(rec);
+            connection.send(send);
+        }
+        else {
+            //connection.send(message.utf8Data);
+            clients.forEach(function each(client) {
+                client.send(message.utf8Data);
+            });
+        }
+
+    });
+    connection.on('close', function(reasonCode, description) {
+        console.log('Client has disconnected.');
+    });
+});
+
+// End example bit
+//
+
 // Add catch all else routes + redirect to /
+/*
 app.get('/*', (req, res) => {
     res.send("Nope");
 });
+*/
 
 // Start Server
 server.listen(port, () => {

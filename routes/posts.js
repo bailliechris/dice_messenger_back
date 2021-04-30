@@ -4,7 +4,8 @@ const router = express.Router();
 
 // Load Post models
 //const Post = require('../models/post');
-// Post Variables
+
+// Post Variable Store posts whilst server is active - replace with DB?
 var all_posts = [];
 
 // Random Number Function
