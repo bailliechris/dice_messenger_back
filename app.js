@@ -15,7 +15,7 @@ const clients = [];
 
 //set up cors options
 let corsOptions = {
-    origin: "http://localhost:8080",
+    origin: "https://suspicious-nobel-3a5d20.netlify.app/",
     credentials: true,
 }
 
