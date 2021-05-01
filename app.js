@@ -34,7 +34,6 @@ app.use(express.urlencoded({ extended: true })); // for parsing application/x-ww
 
 // Routes List
 app.use('/', require('./routes/index'));
-app.use('/posts', require('./routes/posts'));
 
 //
 // Create an HTTP server.
@@ -84,7 +83,11 @@ wss.on('request', function(request) {
         }
 
     });
-    connection.on('close', function(reasonCode, description) {
+    connection.on('close', function (reasonCode, description) {
+        let i = clients.indexOf(connection);
+        clients.splice(i, 1);
+        //let newc = clients.splice(i, 1);
+        //clients = [...newc];
         console.log('Client has disconnected.');
     });
 });
