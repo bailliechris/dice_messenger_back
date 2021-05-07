@@ -13,6 +13,12 @@ const {
     getAllUserNames
 } = require('./utils/users');
 
+// Rolling dice functions
+const {
+    roll_dice,
+    rand_between
+} = require('./utils/math-parse');
+
 // Create new WSS
 const WebSocketServer = require('websocket').server;
 
@@ -22,8 +28,8 @@ const port = process.env.PORT || 3000;
 
 //set up cors options
 let corsOptions = {
-    origin: "https://suspicious-nobel-3a5d20.netlify.app/",
-    //origin: "http://localhost:8080",
+    //origin: "https://suspicious-nobel-3a5d20.netlify.app/",
+    origin: "http://localhost:8080",
     credentials: true,
 }
 
@@ -49,49 +55,44 @@ const wss = new WebSocketServer({
     httpServer: server
 });
 
-// Random numbers for rolls
-function rand_between(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-}
-
 // Decide how to deal with an incoming 'message' event
 function message(name, type, msg, time) {
     // Find a better solution - using this about 50% of the time - not efficient.
     let clients = getAllUsers();
-    switch (msg) {
-        // Roll a D10 and send to all
-        case "roll10":
-            message_handler(null, name, type, rand_between(0, 9), time);
-            break;
-        
-        // Roll a D100 and send to all
-        case "roll100":
-            message_handler(null, name, type, rand_between(0, 99), time);
-            break;
-        
-        // User types help - respond with command list
-        case "help":
-            const con = clients.find(client => client.name === name);
-            message_handler(con.connection,
-                name,
-                type,
-                "Type roll10 for a D10 and roll100 for a D100",
-                time);
-            break;
-        // Standard - deal with messages
-        default:
-            // If only 1 user, respond with help text
-            if (clients.length < 2) {
+
+    if (msg[0] === "!") {
+        message_handler(null, name, type, roll_dice(msg.slice(1)), time);
+    } else {
+        switch (msg) {
+            // Roll a D10 and send to all
+            case "roll":
+                message_handler(null, name, type, rand_between(0, 9), time);
+                break;
+            
+            // User types help - respond with command list
+            case "help":
                 const con = clients.find(client => client.name === name);
                 message_handler(con.connection,
-                    "helpbot",
+                    name,
                     type,
-                    "Just so you know, you're talking to yourself.",
+                    "To roll try: !2d6+3 or !d100 or !5d10",
                     time);
-            // Handle other messages
-            } else {
-                message_handler(null, name, type, msg, time);
-            }
+                break;
+            // Standard - deal with messages
+            default:
+                // If only 1 user, respond with help text
+                if (clients.length < 2) {
+                    const con = clients.find(client => client.name === name);
+                    message_handler(con.connection,
+                        "helpbot",
+                        type,
+                        "Just so you know, you're talking to yourself.",
+                        time);
+                    // Handle other messages
+                } else {
+                    message_handler(null, name, type, msg, time);
+                }
+        }
     }
 }
 
