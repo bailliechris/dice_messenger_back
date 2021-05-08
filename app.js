@@ -28,8 +28,8 @@ const port = process.env.PORT || 3000;
 
 //set up cors options
 let corsOptions = {
-    //origin: "https://suspicious-nobel-3a5d20.netlify.app/",
-    origin: "http://localhost:8080",
+    origin: "https://suspicious-nobel-3a5d20.netlify.app/",
+    //origin: "http://localhost:8080",
     credentials: true,
 }
 
