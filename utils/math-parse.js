@@ -13,6 +13,7 @@ function roll_dice(sum) {
     let total = 0;
     let final = [];
     let pretty = "";
+    let check = 0;
 
     if (d > 0) {
         amount = parseInt(sum.slice(0, d));
@@ -67,10 +68,22 @@ function roll_dice(sum) {
         pretty = JSON.stringify(results) + "=" + total;
     }
 
+    check = pretty.search("NaN");
+    if (check > 0)
+        pretty = "I'm sorry, I didn't quite understand that command."
+    
+    check = pretty.search("null");
+    if (check > 0)
+        pretty = "I'm sorry, I didn't quite understand that command."
+
     return pretty;
 }
 
+/*
 module.exports = {
     rand_between,
     roll_dice
 };
+*/
+
+console.log(roll_dice(" 2d   10 +4"));
