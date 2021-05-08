@@ -79,11 +79,8 @@ function roll_dice(sum) {
     return pretty;
 }
 
-/*
+
 module.exports = {
     rand_between,
     roll_dice
 };
-*/
-
-console.log(roll_dice(" 2d   10 +4"));
